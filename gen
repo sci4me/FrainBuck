@@ -1,0 +1,110 @@
+#!/usr/bin/env lua
+
+local args = { ... }
+
+if #args ~= 1 then
+	print("Usage: gen <file>")
+	return
+end
+
+local fileName = args[1]
+local func, err = loadfile(fileName)
+
+if not func then
+	print("Could not load '" .. args[1] .. "':")
+	print(err)
+	return
+end
+
+local buffer = {}
+
+local function emit(s)
+	if s then
+		table.insert(buffer, tostring(s))
+	end
+end
+
+local function emitn(s, n)
+	if not n then
+		table.insert(buffer, tostring(s))
+	elseif type(n) == "number" then
+		if n ~= math.floor(n) then
+			error("expected integer, got '" .. n .. "'")
+		end 
+
+		if n <= 0 then
+			error("n must be > 0")
+		end
+
+		s = tostring(s)
+		for i = 1, n do
+			table.insert(buffer, s)
+		end
+	else
+		error("expected integer, got " .. type(n))
+	end
+end
+
+local fenv = {
+	emit = emit,
+	emitln = function(s)
+		emit(s .. "\n")
+	end,
+	add = function(n)
+		emitn("+", n)
+	end,
+	sub = function(n)
+		emitn("-", n)
+	end,
+	left = function(n)
+		emitn("<", n)
+	end,
+	right = function(n)
+		emitn(">", n)
+	end,
+	read = function(n)
+		emitn(",", n)
+	end,
+	write = function(n)
+		emitn(".", n)
+	end,
+	open = function()
+		emit("[")
+	end,
+	close = function()
+		emit("]")
+	end,
+	clear = function()
+		emit("[-]")
+	end,
+	string = _G.string,
+	math = _G.math,
+	table = _G.table,
+	coroutine = _G.coroutine,
+	xpcall = _G.xpcall,
+	tostring = _G.tostring,
+	print = _G.print,
+	unpack = _G.unpack,
+	next = _G.next,
+	assert = _G.assert,
+	tonumber = _G.tonumber,
+	pcall = _G.pcall,
+	type = _G.type,
+	select = _G.select,
+	pairs = _G.pairs,
+	ipairs = _G.ipairs,
+	error = _G.error
+}
+fenv._G = fenv
+setfenv(func, fenv)
+
+local ok, err = pcall(func)
+if ok and not err then
+	local outFh = io.open(fileName .. ".bf", "w")
+	outFh:write(table.concat(buffer))
+	outFh:flush()
+	outFh:close()
+else
+	print("Error:")
+	print(err)
+end
