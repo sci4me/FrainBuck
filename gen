@@ -86,7 +86,8 @@ end
 local fenv = {
 	emit = emit,
 	emitln = function(s)
-		emit(s .. "\n")
+		emit(s)
+		emit("\n")
 	end,
 	add = function(n)
 		emitn("+", n)
