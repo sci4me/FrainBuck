@@ -22,6 +22,7 @@ local loop = nil
 local loopStack = {}
 
 local pointer = 0
+local pointerValid = true
 
 local function emit(s)
 	if s then
@@ -50,7 +51,23 @@ local function emitn(s, n)
 	end
 end
 
+local function checkPointerValidity()
+	if not pointerValid then
+		local localInfo = debug.getinfo(1)
+		local n = 1
+		local info
+		repeat
+			info = debug.getinfo(n)
+			n = n + 1
+		until info.source ~= localInfo.source
+
+		print("WARNING: pointer is invalid due to an unbalanced loop; " .. info.source .. ":" .. info.currentline)
+	end
+end
+
 local function track(direction, n)
+	checkPointerValidity()
+
 	if not loop then
 		return
 	end
@@ -63,6 +80,8 @@ local function track(direction, n)
 end
 
 local function goto(n)
+	checkPointerValidity()
+
 	if n == pointer then
 		return
 	end
@@ -125,6 +144,10 @@ local fenv = {
 			if loop.left ~= loop.right then
 				error("Unbalanced loop")
 			end
+		else
+			if loop.left ~= loop.right then
+				pointerValid = false
+			end
 		end
 		loop = loopStack[#loopStack]
 		table.remove(loopStack, #loopStack)
@@ -139,6 +162,10 @@ local fenv = {
 	end,
 	to = function(n)
 		goto(n)
+	end,
+	at = function(n)
+		pointer = n
+		pointerValid = true
 	end,
 	string = _G.string,
 	math = _G.math,
@@ -168,6 +195,5 @@ if ok and not err then
 	outFh:flush()
 	outFh:close()
 else
-	print("Error:")
 	print(err)
 end
