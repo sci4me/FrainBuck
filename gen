@@ -59,9 +59,9 @@ local function checkPointerValidity()
 		repeat
 			info = debug.getinfo(n)
 			n = n + 1
-		until info.source ~= localInfo.source
+		until info.short_src ~= localInfo.short_src
 
-		print("WARNING: pointer is invalid due to an unbalanced loop; " .. info.source .. ":" .. info.currentline)
+		print("WARNING: pointer is invalid due to an unbalanced loop: " .. info.short_src .. ":" .. info.currentline)
 	end
 end
 
