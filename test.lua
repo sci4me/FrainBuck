@@ -1,8 +1,14 @@
 add(10)
 open()
-	include("test2.lua")
+	right()
+	add(4)
+	left()
+	sub()
+close()
+
 right()
 add(8)
+
 right()
 add(10)
 
