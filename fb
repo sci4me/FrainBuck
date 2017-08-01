@@ -11,7 +11,6 @@ local fileName = args[1]
 local func, err = loadfile(fileName)
 
 if not func then
-	print("Could not load '" .. args[1] .. "':")
 	print(err)
 	return
 end
@@ -197,6 +196,23 @@ local fenv = {
 	error = _G.error
 }
 fenv._G = fenv
+
+fenv.include = function(file)
+	local func, err = loadfile(file)
+
+	if not func then
+		print(err)
+		os.exit(1)
+	end
+
+	setfenv(func, fenv)
+	local ok, err = pcall(func)
+	if not ok or err then
+		print(err)
+		os.exit(1)
+	end
+end
+
 setfenv(func, fenv)
 
 local ok, err = pcall(func)
