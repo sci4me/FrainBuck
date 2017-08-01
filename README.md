@@ -1,0 +1,2 @@
+# FrainBuck
+FrainBuck is (as of now) a Lua-based Brainfuck "DSL". Someday I hope to create an entire programming language that compiles to Brainfuck (which is what FrainBuck will eventually be), but, for now, this is what it is.
