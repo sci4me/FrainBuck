@@ -51,16 +51,20 @@ local function emitn(s, n)
 	end
 end
 
+local function getCallerInfo() 
+	local localInfo = debug.getinfo(1)
+	local n = 1
+	local info
+	repeat
+		info = debug.getinfo(n)
+		n = n + 1
+	until info.short_src ~= localInfo.short_src
+	return info
+end
+
 local function checkPointerValidity()
 	if not pointerValid then
-		local localInfo = debug.getinfo(1)
-		local n = 1
-		local info
-		repeat
-			info = debug.getinfo(n)
-			n = n + 1
-		until info.short_src ~= localInfo.short_src
-
+		local info = getCallerInfo()
 		print("WARNING: pointer is invalid due to an unbalanced loop: " .. info.short_src .. ":" .. info.currentline)
 	end
 end
@@ -132,9 +136,12 @@ local fenv = {
 	end,
 	open = function()
 		table.insert(loopStack, loop)
+
+		local info = getCallerInfo()
 		loop = {
 			left = 0,
-			right = 0
+			right = 0,
+			start = info.short_src .. ":" .. info.currentline
 		}
 
 		emit("[")
@@ -142,7 +149,9 @@ local fenv = {
 	close = function(allowUnbalanced)
 		if not allowUnbalanced then
 			if loop.left ~= loop.right then
-				error("Unbalanced loop")
+				local info = getCallerInfo()
+				print("Unbalanced loop: " .. loop.start .. " to " .. info.short_src .. ":" .. info.currentline)
+				os.exit(1)
 			end
 		else
 			if loop.left ~= loop.right then
@@ -190,6 +199,11 @@ setfenv(func, fenv)
 
 local ok, err = pcall(func)
 if ok and not err then
+	if loop then
+		print("Loop has no end: " .. loop.start)
+		return
+	end
+
 	local outFh = io.open(fileName .. ".bf", "w")
 	outFh:write(table.concat(buffer))
 	outFh:flush()
