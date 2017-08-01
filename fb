@@ -72,15 +72,19 @@ end
 local function track(direction, n)
 	checkPointerValidity()
 
-	if not loop then
-		return
-	end
-
 	if type(n) ~= "number" or n ~= math.floor(n) then
 		n = 1
 	end
 
-	loop[direction] = loop[direction] + 1
+	if direction == "right" then
+		pointer = pointer + n
+	elseif direction == "left" then
+		pointer = pointer - n
+	end
+
+	if loop then
+		loop[direction] = loop[direction] + n
+	end
 end
 
 local function goto(n)
@@ -121,12 +125,10 @@ local fenv = {
 	left = function(n)
 		track("left", n)
 		emitn("<", n)
-		pointer = pointer - 1
 	end,
 	right = function(n)
 		track("right", n)
 		emitn(">", n)
-		pointer = pointer + 1
 	end,
 	read = function(n)
 		emitn(",", n)
