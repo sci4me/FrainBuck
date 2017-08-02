@@ -23,6 +23,10 @@ local loopStack = {}
 local pointer = 0
 local pointerValid = true
 
+local cells = {}
+local cellsInUse = 0
+local maxCells = 30000
+
 local function emit(s)
 	if s then
 		table.insert(buffer, tostring(s))
@@ -176,6 +180,58 @@ local fenv = {
 	at = function(n)
 		pointer = n
 		pointerValid = true
+	end,
+	maxCells = function(n)
+		maxCells = n
+	end,
+	alloc = function(n)
+		if not n then
+			n = 1
+		elseif type(n) ~= "number" or n ~= math.floor(n) then
+			error("expected integer, got " .. tostring(n))
+		elseif n < 1 then
+			error("n must be > 0")
+		end
+
+		if n > maxCells - cellsInUse then
+			error("out of cells")
+		else
+			cellsInUse = cellsInUse + n
+		end
+
+		local result = {}
+
+		local i = 1
+		while #result < n do
+			if not cells[i] then
+				cells[i] = true
+				table.insert(result, i - 1)
+			end
+			i = i + 1
+		end
+
+		assert(#result == n)
+
+		return unpack(result)
+	end,
+	free = function(...)
+		local addrs = { ... }
+		for i = 1, #addrs do
+			local addr = addrs[i]
+			
+			if type(addr) ~= "number" or addr ~= math.floor(addr) then
+				error("invalid address " .. tostring(addr))
+			end
+
+			local raddr = addr + 1
+
+			if not cells[raddr] then
+				error("attempt to free cell " .. tostring(addr) .. " which is already free")
+			end
+
+			cells[raddr] = false
+		end
+		cellsInUse = cellsInUse - #addrs
 	end,
 	string = _G.string,
 	math = _G.math,
