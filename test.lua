@@ -38,6 +38,16 @@ local function copy(src, dst)
 	to(dst)
 end
 
+local function swap(a, b)
+	local tmp = alloc()
+
+	move(a, tmp)
+	move(b, a)
+	move(tmp, b)
+
+	free(tmp)
+end
+
 local function nz21(r, a)
 	to(r)
 	clear()
@@ -286,8 +296,14 @@ end
 local a, b = alloc(2)
 
 set(a, 1)
-set(b, 1)
+set(b, 2)
 
+swap(a, b)
+
+printCell(a)
+printCell(b)
+
+--[[
 local i = alloc()
 
 local tmp1, tmp2, n = alloc(3)
@@ -315,3 +331,4 @@ open()
 	to(i)
 	dec()
 close()
+]]
