@@ -106,13 +106,19 @@ local function goto(n)
 
 	local dist = math.abs(n - pointer)
 
-	local c
+	local c, direction
 	if n > pointer then
 		c = ">"
+		direction = "right"
 		pointer = pointer + dist
 	elseif n < pointer then
 		c = "<"
+		direction = "left"
 		pointer = pointer - dist
+	end
+
+	if loop then
+		loop[direction] = loop[direction] + dist
 	end
 
 	for i = 1, dist do
