@@ -58,7 +58,7 @@ local function swap(a, b)
 	free(tmp)
 end
 
-local function nz21(r, a)
+local function truthy(r, a)
 	assert(allocated(r))
 	assert(allocated(a))
 
@@ -88,7 +88,7 @@ local function bor(r, a, b)
 		to(a)
 		clear()
 	close()
-	nz21(r, b)
+	truthy(r, b)
 end
 
 local function band(r, a, b)
@@ -149,8 +149,8 @@ local function gt(r, a, b)
 		copy(a, tmp3)
 		copy(b, tmp4)
 
-		nz21(tmp1, tmp3)
-		nz21(tmp2, tmp4)
+		truthy(tmp1, tmp3)
+		truthy(tmp2, tmp4)
 
 		free(tmp3, tmp4)
 
@@ -166,7 +166,7 @@ local function gt(r, a, b)
 		cond()
 	close()
 
-	nz21(r, a)
+	truthy(r, a)
 
 	free(tmp1, tmp2)
 end
@@ -183,8 +183,8 @@ local function eq(r, a, b)
 		copy(a, tmp3)
 		copy(b, tmp4)
 
-		nz21(tmp1, tmp3)
-		nz21(tmp2, tmp4)
+		truthy(tmp1, tmp3)
+		truthy(tmp2, tmp4)
 
 		free(tmp3, tmp4)
 
@@ -208,7 +208,7 @@ local function eq(r, a, b)
 		clear()
 	close()
 
-	nz21(r, b)
+	truthy(r, b)
 	bnot(r)
 	free(c, tmp1, tmp2)
 	to(r)
