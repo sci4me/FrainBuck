@@ -1,3 +1,5 @@
+include("src/bool.lua")
+
 function gt(r, a, b)
 	assert(allocated(r))
 	assert(allocated(a))

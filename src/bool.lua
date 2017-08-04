@@ -1,3 +1,5 @@
+include("src/basic.lua")
+
 function truthy(r, a)
 	assert(allocated(r))
 	assert(allocated(a))
