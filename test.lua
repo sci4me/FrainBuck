@@ -58,6 +58,8 @@ local function nz21(r, a)
 end
 
 local function bor(r, a, b)
+	to(r)
+	clear()
 	to(a)
 	open()
 		to(b)
@@ -78,13 +80,11 @@ local function band(r, a, b)
 			to(r)
 			add()
 			to(b)
-			sub()
+			clear()
 		close()
 		to(a)
-		sub()
+		clear()
 	close()
-	to(b)
-	clear()
 	to(r)
 end
 
@@ -175,7 +175,7 @@ local function eq(r, a, b)
 
 	nz21(r, b)
 	bnot(r)
-	free(tmp1, tmp2)
+	free(c, tmp1, tmp2)
 	to(r)
 end
 
@@ -204,6 +204,11 @@ local function divmod(quotient, remainder, a, b)
 		copy(b, tmp2)
 		gte(tmp3, tmp1, tmp2)
 	end
+
+	to(quotient)
+	clear()
+	to(remainder)
+	clear()
 
 	cond()
 	open()
@@ -234,11 +239,56 @@ local function divmod(quotient, remainder, a, b)
 	to(quotient)
 end
 
+local function printCell(a)
+	local tmp1, tmp2, tmp3, divisor, digit, remainder = alloc(6)
+
+	to(tmp1)
+	add(10)
+	open()
+		sub()
+		to(divisor)
+		add(10)
+		to(tmp1)
+	close()
+
+	copy(a, tmp2)
+	divmod(digit, remainder, tmp2, divisor)
+	copy(digit, tmp3)
+	open()
+		add(48)
+		write()		
+		clear()
+	close()
+
+	to(divisor)
+	clear()
+	add(10)
+	copy(remainder, tmp2)
+	divmod(digit, remainder, tmp2, divisor)
+	copy(digit, tmp3)
+	open()
+		add(48)
+		write()
+		clear()
+	close()
+
+	to(remainder)
+	add(48)
+	write()
+
+	to(divisor)
+	write()
+
+	free(tmp1, tmp2, tmp3, divisor, digit, remainder)
+end
+
 local a, b = alloc(2)
 
-set(a, 36)
-set(b, 5)
+set(a, 255)
 
-local q, r = alloc(2)
-
-divmod(q, r, a, b)
+open()
+	sub()
+	copy(a, b)
+	printCell(b)
+	to(a)
+close()

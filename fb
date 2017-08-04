@@ -25,6 +25,7 @@ local pointerValid = true
 
 local cells = {}
 local cellsInUse = 0
+local maxCellsInUse = 0
 local maxCells = 30000
 
 local function emit(s)
@@ -91,6 +92,12 @@ local function track(direction, n)
 end
 
 local function goto(n)
+	if n == nil then
+		local info = getCallerInfo()
+		print("Error: goto got nil: " .. info.short_src .. ":" .. info.currentline)
+		os.exit(1)
+	end
+
 	checkPointerValidity()
 
 	if n == pointer then
@@ -197,6 +204,10 @@ local fenv = {
 			error("out of cells")
 		else
 			cellsInUse = cellsInUse + n
+
+			if cellsInUse > maxCellsInUse then
+				maxCellsInUse = cellsInUse
+			end
 		end
 
 		local result = {}
@@ -206,6 +217,11 @@ local fenv = {
 			if not cells[i] then
 				cells[i] = true
 				table.insert(result, i - 1)
+
+				local rt = pointer
+				goto(i - 1)
+				emit("[-]")
+				goto(pointer)
 			end
 			i = i + 1
 		end
@@ -228,11 +244,6 @@ local fenv = {
 			if not cells[raddr] then
 				error("attempt to free cell " .. tostring(addr) .. " which is already free")
 			end
-
-			--local rt = pointer + 1
-			--goto(raddr)
-			--emit("[-]")
-			--goto(pointer)
 
 			cells[raddr] = false
 		end
@@ -285,6 +296,8 @@ if ok and not err then
 		print("Loop has no end: " .. loop.start)
 		return
 	end
+
+	print("max cells: " .. maxCellsInUse)
 
 	local outFh = io.open(fileName .. ".bf", "w")
 	outFh:write(table.concat(buffer))
