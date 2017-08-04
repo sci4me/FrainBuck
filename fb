@@ -325,7 +325,13 @@ local fenv = {
 }
 fenv._G = fenv
 
+local included = {}
 fenv.include = function(file)
+	if included[file] then
+		return
+	end
+	included[file] = true
+
 	local func, err = loadfile(file)
 
 	if not func then
