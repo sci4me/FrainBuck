@@ -132,10 +132,10 @@ local fenv = {
 		emit(s)
 		emit("\n")
 	end,
-	add = function(n)
+	inc = function(n)
 		emitn("+", n)
 	end,
-	sub = function(n)
+	dec = function(n)
 		emitn("-", n)
 	end,
 	left = function(n)
