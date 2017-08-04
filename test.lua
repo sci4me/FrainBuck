@@ -335,15 +335,15 @@ local function printCell(a)
 	free(tmp1, tmp2, tmp3, divisor, digit, remainder, tmp5, tmp6)
 end
 
-local a, b = alloc(2)
+local n = 8
+local a = allocBlock(n)
 
-set(a, 1)
-set(b, 2)
+for i = 1, n do
+	to(a.start + i - 1)
+	inc(i)
+end
 
-swap(a, b)
-
-printCell(a)
-printCell(b)
+freeBlock(a)
 
 --[[
 local i = alloc()
