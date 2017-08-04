@@ -1,62 +1,244 @@
-local _tmp, _tmp2 = alloc(2)
-
-local _chars = { alloc(15) }
-local _pad2 = alloc()
-
-local bs = { 10, 9, 11, 11, 12, 3, 9, 10, 11, 10, 10, 9, 12, 3, 1 }
-local bs2 = { 4, 7,  2,  2,  1, 2, 8,  5,  4,  2,  0, 7,  1, 3, 0 }
-
-to(_tmp)
-add(10)
-open()
-	for i = 1, #bs do
-		to(_chars[i])
-		add(bs[i])
-	end
-
-	to(_tmp)
-	sub()
-close()
-
-for i = 1, #bs2 do
-	to(_chars[i])
-	if bs2[i] > 0 then
-		add(bs2[i])
-	end
+local function set(cell, value)
+	assert(allocated(cell))
+	assert(value >= 0)
+	to(cell)
+	clear()
+	add(value)
 end
 
-for i = 1, 2 do
-	to(_tmp2)
-	add(20)
+local function move(src, dst)
+	to(dst)
+	clear()
+	to(src)
 	open()
-		to(_tmp)
-		add(10)
-		to(_tmp2)
 		sub()
+		to(dst)
+		add()
+		to(src)
+	close()
+end
+
+local function copy(src, dst)
+	local tmp = alloc()
+
+	to(dst)
+	clear()
+	to(src)
+	open()
+		sub()
+		to(dst)
+		add()
+		to(tmp)
+		add()
+		to(src)
 	close()
 
-	to(_tmp)
+	to(tmp)
 	open()
-		to(_chars[1])
+		sub()
+		to(src)
+		add()
+		to(tmp)
+	close()
+	free(tmp)
+	to(dst)
+end
+
+local function nz21(r, a)
+	to(r)
+	clear()
+	to(a)	
+	open()
+		to(r)
+		add()
+		to(a)
+		clear()
+	close()
+	to(r)
+end
+
+local function bor(r, a, b)
+	to(a)
+	open()
+		to(b)
+		add()
+		to(a)
+		clear()
+	close()
+	nz21(r, b)
+end
+
+local function band(r, a, b)
+	to(r)
+	clear()
+	to(a)
+	open()
+		to(b)
 		open()
-			write()
-			right()
-		close(true)
-		at(_pad2)
-		to(_tmp)
+			to(r)
+			add()
+			to(b)
+			sub()
+		close()
+		to(a)
 		sub()
 	close()
+	to(b)
+	clear()
+	to(r)
 end
 
-to(_tmp)
-add(20)
-open()
-	to(_chars[1])
+local function bnot(a)
+	local tmp = alloc()
+
+	to(a)
 	open()
-		write()
-		right()
-	close(true)
-	at(_pad2)
-	to(_tmp)
-	sub()
-close()
+		to(tmp)
+		add()
+		to(a)
+		clear()
+	close()
+	add()
+	to(tmp)
+	open()
+		to(a)
+		sub()
+		to(tmp)
+		sub()
+	close()
+	free(tmp)
+	to(a)
+end
+
+local function gt(r, a, b)
+	local c, tmp1, tmp2 = alloc(3)
+
+	local function cond()
+		local tmp3, tmp4 = alloc(2)
+		copy(a, tmp3)
+		copy(b, tmp4)
+
+		nz21(tmp1, tmp3)
+		nz21(tmp2, tmp4)
+
+		free(tmp3, tmp4)
+
+		band(c, tmp1, tmp2)
+	end
+
+	cond()
+	open()
+		to(a)
+		sub()
+		to(b)
+		sub()
+		cond()
+	close()
+
+	nz21(r, a)
+
+	free(tmp1, tmp2)
+end
+
+local function eq(r, a, b)
+	local c, tmp1, tmp2 = alloc(3)
+
+	local function cond()
+		local tmp3, tmp4 = alloc(2)
+		copy(a, tmp3)
+		copy(b, tmp4)
+
+		nz21(tmp1, tmp3)
+		nz21(tmp2, tmp4)
+
+		free(tmp3, tmp4)
+
+		band(c, tmp1, tmp2)
+	end
+
+	cond()
+	open()
+		to(a)
+		sub()
+		to(b)
+		sub()
+		cond()
+	close()
+
+	to(a)
+	open()
+		to(b)
+		add()
+		to(a)
+		clear()
+	close()
+
+	nz21(r, b)
+	bnot(r)
+	free(tmp1, tmp2)
+	to(r)
+end
+
+local function gte(r, a, b)
+	local ta, tb = alloc(2)
+	local g, e = alloc(2)
+
+	copy(a, ta)
+	copy(b, tb)
+	gt(g, ta, tb)
+
+	copy(a, ta)
+	copy(b, tb)
+	eq(e, ta, tb)
+
+	bor(r, g, e)
+
+	free(ta, tb, g, e)
+end
+
+local function divmod(quotient, remainder, a, b)
+	local tmp1, tmp2, tmp3 = alloc(3)
+
+	local function cond()
+		copy(a, tmp1)
+		copy(b, tmp2)
+		gte(tmp3, tmp1, tmp2)
+	end
+
+	cond()
+	open()
+		copy(b, tmp1)
+		open()
+			sub()
+			to(a)
+			sub()
+			to(tmp1)
+		close()
+
+		to(quotient)
+		add()
+
+		cond()
+	close()
+
+	to(a)
+	open()
+		sub()
+		to(remainder)
+		add()
+		to(a)
+	close()
+
+	free(tmp1, tmp2, tmp3)
+
+	to(quotient)
+end
+
+local a, b = alloc(2)
+
+set(a, 36)
+set(b, 5)
+
+local q, r = alloc(2)
+
+divmod(q, r, a, b)

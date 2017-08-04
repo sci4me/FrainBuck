@@ -41,7 +41,7 @@ local function emitn(s, n)
 			error("expected integer, got '" .. n .. "'")
 		end 
 
-		if n <= 0 then
+		if n < 0 then
 			error("n must be > 0")
 		end
 
@@ -229,9 +229,17 @@ local fenv = {
 				error("attempt to free cell " .. tostring(addr) .. " which is already free")
 			end
 
+			--local rt = pointer + 1
+			--goto(raddr)
+			--emit("[-]")
+			--goto(pointer)
+
 			cells[raddr] = false
 		end
 		cellsInUse = cellsInUse - #addrs
+	end,
+	allocated = function(addr)
+		return cells[addr + 1]
 	end,
 	string = _G.string,
 	math = _G.math,
