@@ -1,12 +1,16 @@
 local function set(cell, value)
 	assert(allocated(cell))
 	assert(value >= 0)
+
 	to(cell)
 	clear()
 	inc(value)
 end
 
 local function move(src, dst)
+	assert(allocated(src))
+	assert(allocated(dst))
+
 	to(dst)
 	clear()
 	to(src)
@@ -19,6 +23,9 @@ local function move(src, dst)
 end
 
 local function copy(src, dst)
+	assert(allocated(src))
+	assert(allocated(dst))
+
 	local tmp = alloc()
 
 	to(dst)
@@ -39,6 +46,9 @@ local function copy(src, dst)
 end
 
 local function swap(a, b)
+	assert(allocated(a))
+	assert(allocated(b))
+
 	local tmp = alloc()
 
 	move(a, tmp)
@@ -49,6 +59,9 @@ local function swap(a, b)
 end
 
 local function nz21(r, a)
+	assert(allocated(r))
+	assert(allocated(a))
+
 	to(r)
 	clear()
 	to(a)	
@@ -62,6 +75,10 @@ local function nz21(r, a)
 end
 
 local function bor(r, a, b)
+	assert(allocated(r))
+	assert(allocated(a))
+	assert(allocated(b))
+
 	to(r)
 	clear()
 	to(a)
@@ -75,6 +92,10 @@ local function bor(r, a, b)
 end
 
 local function band(r, a, b)
+	assert(allocated(r))
+	assert(allocated(a))
+	assert(allocated(b))
+
 	to(r)
 	clear()
 	to(a)
@@ -93,6 +114,8 @@ local function band(r, a, b)
 end
 
 local function bnot(a)
+	assert(allocated(a))
+
 	local tmp = alloc()
 
 	to(a)
@@ -115,6 +138,10 @@ local function bnot(a)
 end
 
 local function gt(r, a, b)
+	assert(allocated(r))
+	assert(allocated(a))
+	assert(allocated(b))
+
 	local c, tmp1, tmp2 = alloc(3)
 
 	local function cond()
@@ -145,6 +172,10 @@ local function gt(r, a, b)
 end
 
 local function eq(r, a, b)
+	assert(allocated(r))
+	assert(allocated(a))
+	assert(allocated(b))
+
 	local c, tmp1, tmp2 = alloc(3)
 
 	local function cond()
@@ -184,6 +215,10 @@ local function eq(r, a, b)
 end
 
 local function gte(r, a, b)
+	assert(allocated(r))
+	assert(allocated(a))
+	assert(allocated(b))
+
 	local ta, tb = alloc(2)
 	local g, e = alloc(2)
 
@@ -201,6 +236,11 @@ local function gte(r, a, b)
 end
 
 local function divmod(quotient, remainder, a, b)
+	assert(allocated(quotient))
+	assert(allocated(remainder))
+	assert(allocated(a))
+	assert(allocated(b))
+
 	local tmp1, tmp2, tmp3 = alloc(3)
 
 	local function cond()
@@ -244,6 +284,8 @@ local function divmod(quotient, remainder, a, b)
 end
 
 local function printCell(a)
+	assert(allocated(a))
+
 	local tmp1, tmp2, tmp3, divisor, digit, remainder, tmp5, tmp6 = alloc(8)
 
 	to(tmp1)
