@@ -71,8 +71,8 @@ function eq(r, a, b)
 		clear()
 	close()
 
-	truthy(r, b)
-	bnot(r)
+	truthy(tmp1, b)
+	bnot(r, tmp1)
 	free(c, tmp1, tmp2)
 	to(r)
 end

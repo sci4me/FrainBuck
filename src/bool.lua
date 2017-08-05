@@ -44,18 +44,13 @@ function band(r, a, b)
 	to(r)
 end
 
-function bnot(a)
+function bnot(r, a)
+	assert(allocated(r))
 	assert(allocated(a))
 
-	local tmp = alloc()
-
-	to(tmp)
-	inc()
+	set(r, 1)
 	if_then(a, function()
-		to(tmp)
+		to(r)
 		dec()		
 	end)
-	move(tmp, a)
-
-	free(tmp)
 end
