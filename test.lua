@@ -5,9 +5,14 @@ include("src/print.lua")
 
 local a, b = alloc(2)
 
-set(a, 1)
-set(b, 1)
+set(a, 2)
 
+if_then(a, function()
+	set(b, 42)
+	printCell(b)
+end)
+
+--[[
 local i = alloc()
 
 local tmp1, tmp2, n = alloc(3)
@@ -35,3 +40,4 @@ open()
 	to(i)
 	dec()
 close()
+]]

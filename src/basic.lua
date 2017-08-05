@@ -57,3 +57,33 @@ function swap(a, b)
 
 	free(tmp)
 end
+
+function if_then(cond, t)
+	to(cond)
+	open()
+		t()
+		to(cond)
+		clear()
+	close()
+end
+
+function if_then_else(cond, t, f)
+	local tmp = alloc()
+
+	set(tmp, 1)
+
+	to(cond)
+	open()
+		t()
+		to(tmp)
+		dec()
+		to(cond)
+		clear()
+	close()
+	to(tmp)
+	open()
+		f()
+		to(tmp)
+		dec()
+	close()
+end
