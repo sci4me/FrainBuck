@@ -10,8 +10,8 @@ set(b, 2)
 
 local i = alloc()
 
-mul(i, a, b)
---printCell(i)
+add(a, b)
+printCell(a)
 
 --[[
 local tmp1, tmp2, n = alloc(3)

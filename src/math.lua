@@ -138,6 +138,38 @@ function gte(r, a, b)
 	free(ta, tb, g, e)
 end
 
+function add(r, a)
+	assert(allocated(r))
+	assert(allocated(a))
+
+	local tmp = alloc()
+
+	copy(a, tmp)
+	open()
+		to(r)
+		inc()
+		to(tmp)
+		dec()
+	close()
+	to(r)
+end
+
+function sub(r, a)
+	assert(allocated(r))
+	assert(allocated(a))
+
+	local tmp = alloc()
+
+	copy(a, tmp)
+	open()
+		to(r)
+		dec()
+		to(tmp)
+		dec()
+	close()
+	to(r)
+end
+
 function mul(r, a, b)
 	local tmp1, tmp2 = alloc(2)
 
