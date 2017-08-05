@@ -68,8 +68,7 @@ end
 
 local function checkPointerValidity()
 	if not pointerValid then
-		local info = getCallerInfo()
-		print("WARNING: pointer is invalid due to an unbalanced loop: " .. info.short_src .. ":" .. info.currentline)
+		error("pointer is invalid due to an unbalanced loop")
 	end
 end
 
@@ -92,10 +91,8 @@ local function track(direction, n)
 end
 
 local function goto(n)
-	if n == nil then
-		local info = getCallerInfo()
-		print("Error: goto got nil: " .. info.short_src .. ":" .. info.currentline)
-		os.exit(1)
+	if type(n) ~= "number" and n ~= math.floor(n) then
+		error("goto got " .. tostring(n) .. ", expected integer")
 	end
 
 	checkPointerValidity()
@@ -168,8 +165,7 @@ local fenv = {
 		if not allowUnbalanced then
 			if loop.left ~= loop.right then
 				local info = getCallerInfo()
-				print("Unbalanced loop: " .. loop.start .. " to " .. info.short_src .. ":" .. info.currentline)
-				os.exit(1)
+				error("unbalanced loop: " .. loop.start .. " to " .. info.short_src .. ":" .. info.currentline)
 			end
 		else
 			if loop.left ~= loop.right then
@@ -335,22 +331,20 @@ fenv.include = function(file)
 	local func, err = loadfile(file)
 
 	if not func then
-		print(err)
-		os.exit(1)
+		error(err)
 	end
 
 	setfenv(func, fenv)
-	local ok, err = pcall(func)
-	if not ok or err then
-		print(err)
-		os.exit(1)
+	local status, ret, err = xpcall(func, debug.traceback)
+	if not status or err then
+		error(ret)
 	end
 end
 
 setfenv(func, fenv)
 
-local ok, err = pcall(func)
-if ok and not err then
+local status, ret, err = xpcall(func, debug.traceback)
+if status and not err then
 	if loop then
 		print("Loop has no end: " .. loop.start)
 		return
@@ -363,5 +357,5 @@ if ok and not err then
 	outFh:flush()
 	outFh:close()
 else
-	print(err)
+	print(ret)
 end

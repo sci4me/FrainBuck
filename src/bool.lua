@@ -53,4 +53,5 @@ function bnot(r, a)
 		to(r)
 		dec()		
 	end)
+	to(r)
 end

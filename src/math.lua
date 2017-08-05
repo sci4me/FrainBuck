@@ -24,7 +24,7 @@ function gt(r, a, b)
 
 	truthy(r, a)
 
-	free(tmp1, tmp2)
+	free(c, tmp1, tmp2)
 end
 
 function eq(r, a, b)
@@ -59,8 +59,8 @@ function eq(r, a, b)
 
 	truthy(tmp1, b)
 	bnot(r, tmp1)
+
 	free(c, tmp1, tmp2)
-	to(r)
 end
 
 function gte(r, a, b)
