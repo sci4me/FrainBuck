@@ -45,5 +45,35 @@ end
 function alen(r, a)
 	assert(allocated(r))
 	assert(blockAllocated(a))
-	
+
+	local s = a.start
+	local e = a.start + a.length - 1
+	local tmp = e - 1
+
+	set(tmp, 0)
+
+	to(s + 2)
+	open()
+		dec()
+
+		right(2)
+		open()
+			right(2)
+		close(true)
+		at(e)
+		
+		to(tmp)
+		inc()
+		
+		left()
+		open()
+			left(2)
+		close(true)
+
+		inc()
+		emit(">>")
+	close()
+	at(e)
+
+	move(r, tmp)
 end
