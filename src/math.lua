@@ -8,15 +8,8 @@ function gt(r, a, b)
 	local c, tmp1, tmp2 = alloc(3)
 
 	local function cond()
-		local tmp3, tmp4 = alloc(2)
-		copy(a, tmp3)
-		copy(b, tmp4)
-
-		truthy(tmp1, tmp3)
-		truthy(tmp2, tmp4)
-
-		free(tmp3, tmp4)
-
+		copy(a, tmp1)
+		copy(b, tmp2)
 		band(c, tmp1, tmp2)
 	end
 
@@ -42,15 +35,8 @@ function eq(r, a, b)
 	local c, tmp1, tmp2 = alloc(3)
 
 	local function cond()
-		local tmp3, tmp4 = alloc(2)
-		copy(a, tmp3)
-		copy(b, tmp4)
-
-		truthy(tmp1, tmp3)
-		truthy(tmp2, tmp4)
-
-		free(tmp3, tmp4)
-
+		copy(a, tmp1)
+		copy(b, tmp2)
 		band(c, tmp1, tmp2)
 	end
 
