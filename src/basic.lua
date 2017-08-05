@@ -59,6 +59,9 @@ function swap(a, b)
 end
 
 function if_then(cond, t)
+	assert(allocated(cond))
+	assert(type(t) == "function")
+
 	to(cond)
 	open()
 		t()
@@ -68,6 +71,10 @@ function if_then(cond, t)
 end
 
 function if_then_else(cond, t, f)
+	assert(allocated(cond))
+	assert(type(t) == "function")
+	assert(type(f) == "function")
+
 	local tmp = alloc()
 
 	set(tmp, 1)
