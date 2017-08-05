@@ -50,4 +50,6 @@ function printCell(a)
 	write()
 
 	free(tmp1, tmp2, tmp3, divisor, digit, remainder, tmp5, tmp6)
+
+	to(a)
 end
