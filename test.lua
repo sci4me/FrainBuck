@@ -2,7 +2,20 @@ include("src/basic.lua")
 include("src/bool.lua")
 include("src/math.lua")
 include("src/print.lua")
+include("src/array.lua")
 
+local i, v = alloc(2)
+
+local a = allocBlock(9)
+
+ainit(a)
+
+set(i, 1)
+set(v, 7)
+aset(a, i, v)
+
+
+--[[
 local a, b = alloc(2)
 
 set(a, 1)
@@ -35,3 +48,4 @@ open()
 	to(i)
 	dec()
 close()
+]]

@@ -272,6 +272,7 @@ local fenv = {
 
 				local rt = pointer
 				for j = i, i + size - 1 do
+					cells[j] = true
 					goto(j - 1)
 					emit("[-]")
 				end
