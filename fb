@@ -364,10 +364,22 @@ if status and not err then
 		return
 	end
 
+	local code = table.concat(buffer)
+
+	local instructions = 0
+	for i = 1, #code do
+		local c = code:sub(i, i)
+		if c == '+' or c == '-' or c == '<' or c == '>' or c == '[' or c == ']' or c == ',' or c == '.' then
+			instructions = instructions + 1
+		end
+	end
+
 	print("max cells: " .. maxCellsInUse)
+	print("instructions: " .. instructions)
+	print()
 
 	local outFh = io.open(fileName .. ".bf", "w")
-	outFh:write(table.concat(buffer))
+	outFh:write(code)
 	outFh:flush()
 	outFh:close()
 else

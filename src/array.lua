@@ -56,18 +56,17 @@ function alen(r, a)
 	open()
 		dec()
 
-		right(2)
+		emit(">>")
 		open()
-			right(2)
+			emit(">>")
 		close(true)
-		at(e)
 		
-		to(tmp)
+		emit("<")
 		inc()
 		
-		left()
+		emit("<")
 		open()
-			left(2)
+			emit("<<")
 		close(true)
 
 		inc()
