@@ -6,14 +6,20 @@ include("src/array.lua")
 
 local i, v = alloc(2)
 
-local a = allocBlock(11)
-
+local a = allocBlock(9)
 ainit(a)
 
-alen(i, a)
+set(i, 0)
+set(v, 2)
+aset(a, i, v)
 
-printCell(i)
+set(i, 1)
+set(v, 4)
+aset(a, i, v)
 
+set(i, 2)
+set(v, 8)
+aset(a, i, v)
 
 --[[
 local a, b = alloc(2)
