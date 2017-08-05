@@ -1,4 +1,7 @@
 function ainit(a)
+	assert(blockAllocated(a))
+	assert(a.length >= 5)
+
 	local s = a.start
 	local e = a.start + a.length - 1
 	local tmp = e - 1
@@ -14,6 +17,10 @@ function ainit(a)
 end
 
 function aset(a, i, v)
+	assert(blockAllocated(a))
+	assert(allocated(i))
+	assert(allocated(v))
+
 	local s = a.start
 	local e = a.start + a.length - 1
 	local tmp = e - 1
@@ -29,9 +36,14 @@ function aset(a, i, v)
 end
 
 function aget(r, a, i)
+	assert(allocated(r))
+	assert(blockAllocated(a))
+	assert(allocated(i))
 
 end
 
 function alen(r, a)
-
+	assert(allocated(r))
+	assert(blockAllocated(a))
+	
 end

@@ -251,6 +251,9 @@ local fenv = {
 		end
 		cellsInUse = cellsInUse - #addrs
 	end,
+	allocated = function(addr)
+		return cells[addr + 1]
+	end,
 	allocBlock = function(size)
 		local block = {}
 
@@ -289,6 +292,8 @@ local fenv = {
 		end
 	end,
 	freeBlock = function(blk)
+		assert(blk)
+
 		for i = blk.start, blk.start + blk.length - 1 do
 			if cells[i] then
 				error("block corrupted")
@@ -299,8 +304,16 @@ local fenv = {
 
 		cellsInUse = cellsInUse - blk.length
 	end,
-	allocated = function(addr)
-		return cells[addr + 1]
+	blockAllocated = function(blk)
+		assert(blk)
+
+		for i = blk.start, blk.start + blk.length - 1 do
+			if not cells[i] then
+				return false
+			end
+		end
+
+		return true
 	end,
 	string = _G.string,
 	math = _G.math,
