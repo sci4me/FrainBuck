@@ -20,6 +20,7 @@ function move(src, dst)
 		inc()
 		to(src)
 	close()
+	to(dst)
 end
 
 function copy(src, dst)

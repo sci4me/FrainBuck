@@ -138,6 +138,29 @@ function gte(r, a, b)
 	free(ta, tb, g, e)
 end
 
+function mul(r, a, b)
+	local tmp1, tmp2 = alloc(2)
+
+	copy(a, tmp1)
+	to(a)
+	clear()
+	to(tmp1)
+	open()
+		copy(b, tmp2)
+		open()
+			to(a)
+			inc()
+			to(tmp2)
+			dec()
+		close()
+		to(tmp1)
+		dec()
+	close()
+	move(a, r)
+
+	free(tmp1, tmp2)
+end
+
 function divmod(quotient, remainder, a, b)
 	assert(allocated(quotient))
 	assert(allocated(remainder))

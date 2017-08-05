@@ -5,13 +5,13 @@ include("src/print.lua")
 
 local a, b = alloc(2)
 
-set(a, 5)
-set(b, 4)
+set(a, 3)
+set(b, 2)
 
 local i = alloc()
 
-lte(i, a, b)
-printCell(i)
+mul(i, a, b)
+--printCell(i)
 
 --[[
 local tmp1, tmp2, n = alloc(3)
