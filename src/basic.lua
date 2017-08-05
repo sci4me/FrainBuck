@@ -7,7 +7,7 @@ function set(cell, value)
 	inc(value)
 end
 
-function move(src, dst)
+function move(dst, src)
 	assert(allocated(src))
 	assert(allocated(dst))
 
@@ -23,7 +23,7 @@ function move(src, dst)
 	to(dst)
 end
 
-function copy(src, dst)
+function copy(dst, src)
 	assert(allocated(src))
 	assert(allocated(dst))
 
@@ -41,7 +41,7 @@ function copy(src, dst)
 		to(src)
 	close()
 
-	move(tmp, src)
+	move(src, tmp) 
 	free(tmp)
 	to(dst)
 end
@@ -52,9 +52,9 @@ function swap(a, b)
 
 	local tmp = alloc()
 
-	move(a, tmp)
-	move(b, a)
-	move(tmp, b)
+	move(tmp, a) 
+	move(a, b) 
+	move(b, tmp) 
 
 	free(tmp)
 end

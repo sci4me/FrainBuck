@@ -8,8 +8,8 @@ function eq(r, a, b)
 	local c, tmp1, tmp2 = alloc(3)
 
 	local function cond()
-		copy(a, tmp1)
-		copy(b, tmp2)
+		copy(tmp1, a) 
+		copy(tmp2, b) 
 		band(c, tmp1, tmp2)
 	end
 
@@ -38,7 +38,7 @@ end
 
 function ne(r, a, b)
 	eq(r, a, b)
-	copy(r, a)
+	copy(a, r) 
 	bnot(r, a)	
 end
 
@@ -50,8 +50,8 @@ function lt(r, a, b)
 	local c, tmp1, tmp2 = alloc(3)
 
 	local function cond()
-		copy(a, tmp1)
-		copy(b, tmp2)
+		copy(tmp1, a) 
+		copy(tmp2, b) 
 		band(c, tmp1, tmp2)
 	end
 
@@ -77,8 +77,8 @@ function gt(r, a, b)
 	local c, tmp1, tmp2 = alloc(3)
 
 	local function cond()
-		copy(a, tmp1)
-		copy(b, tmp2)
+		copy(tmp1, a) 
+		copy(tmp2, b) 
 		band(c, tmp1, tmp2)
 	end
 
@@ -104,12 +104,12 @@ function lte(r, a, b)
 	local ta, tb = alloc(2)
 	local g, e = alloc(2)
 
-	copy(a, ta)
-	copy(b, tb)
+	copy(ta, a) 
+	copy(tb, b) 
 	lt(g, ta, tb)
 
-	copy(a, ta)
-	copy(b, tb)
+	copy(ta, a) 
+	copy(tb, b) 
 	eq(e, ta, tb)
 
 	bor(r, g, e)
@@ -125,12 +125,12 @@ function gte(r, a, b)
 	local ta, tb = alloc(2)
 	local g, e = alloc(2)
 
-	copy(a, ta)
-	copy(b, tb)
+	copy(ta, a) 
+	copy(tb, b) 
 	gt(g, ta, tb)
 
-	copy(a, ta)
-	copy(b, tb)
+	copy(ta, a)  
+	copy(tb, b)  
 	eq(e, ta, tb)
 
 	bor(r, g, e)
@@ -144,7 +144,7 @@ function add(r, a)
 
 	local tmp = alloc()
 
-	copy(a, tmp)
+	copy(tmp, a) 
 	open()
 		to(r)
 		inc()
@@ -160,7 +160,7 @@ function sub(r, a)
 
 	local tmp = alloc()
 
-	copy(a, tmp)
+	copy(tmp, a) 
 	open()
 		to(r)
 		dec()
@@ -173,12 +173,12 @@ end
 function mul(r, a, b)
 	local tmp1, tmp2 = alloc(2)
 
-	copy(a, tmp1)
+	copy(tmp1, a) 
 	to(a)
 	clear()
 	to(tmp1)
 	open()
-		copy(b, tmp2)
+		copy(tmp2, b) 
 		open()
 			to(a)
 			inc()
@@ -188,7 +188,7 @@ function mul(r, a, b)
 		to(tmp1)
 		dec()
 	close()
-	move(a, r)
+	move(r, a) 
 
 	free(tmp1, tmp2)
 end
@@ -202,8 +202,8 @@ function divmod(quotient, remainder, a, b)
 	local tmp1, tmp2, tmp3 = alloc(3)
 
 	local function cond()
-		copy(a, tmp1)
-		copy(b, tmp2)
+		copy(tmp1, a) 
+		copy(tmp2, b) 
 		gte(tmp3, tmp1, tmp2)
 	end
 
@@ -214,7 +214,7 @@ function divmod(quotient, remainder, a, b)
 
 	cond()
 	open()
-		copy(b, tmp1)
+		copy(tmp1, b) 
 		open()
 			dec()
 			to(a)

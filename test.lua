@@ -5,15 +5,11 @@ include("src/print.lua")
 
 local a, b = alloc(2)
 
-set(a, 3)
-set(b, 2)
+set(a, 1)
+set(b, 1)
 
 local i = alloc()
 
-add(a, b)
-printCell(a)
-
---[[
 local tmp1, tmp2, n = alloc(3)
 
 printCell(a)
@@ -21,22 +17,21 @@ printCell(b)
 
 set(i, 11)
 open()
-	copy(a, tmp1)
-	copy(b, tmp2)
+	copy(tmp1, a) 
+	copy(tmp2, b) 
 	open()
-		dec()
 		to(tmp1)
 		inc()
 		to(tmp2)
+		dec()
 	close()	
 
-	copy(tmp1, n)
+	copy(n, tmp1) 
 	printCell(n)
 
-	move(b, a)
-	move(tmp1, b)
+	move(a, b) 
+	move(b, tmp1) 
 	
 	to(i)
 	dec()
 close()
-]]
