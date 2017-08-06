@@ -4,54 +4,43 @@ include("src/math.lua")
 include("src/print.lua")
 include("src/array.lua")
 
-local i, v = alloc(2)
+local ADD = 1
+local SUB = 2
+local LEFT = 3
+local RIGHT = 4
+local READ = 5
+local WRITE = 7
+local OPEN = 8
+local CLOSE = 9
 
-local a = allocBlock(9)
-ainit(a)
+local r, ip, dp, i, tmp, tmp2 = alloc(6)
 
-set(i, 0)
-set(v, 2)
-aset(a, i, v)
+set(r, 1)
 
-set(i, 1)
-set(v, 4)
-aset(a, i, v)
+local code = allocBlock(256 * 2 + 3)
+local data = allocBlock(256 * 2 + 3)
+ainit(code)
+ainit(data)
 
-set(i, 2)
-set(v, 8)
-aset(a, i, v)
+-- fill out code
+local bfcode = {
+	ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD,
+	ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD,
+	ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD,
+	ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD,
+	ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD, ADD,
+	ADD, WRITE, WRITE, WRITE
+}
+for i = 1, #bfcode do
+	set(tmp, i - 1)
+	set(tmp2, bfcode[i])
+	aset(code, tmp, tmp2)
+end
 
---[[
-local a, b = alloc(2)
-
-set(a, 1)
-set(b, 1)
-
-local i = alloc()
-
-local tmp1, tmp2, n = alloc(3)
-
-printCell(a)
-printCell(b)
-
-set(i, 11)
+to(r)
 open()
-	copy(tmp1, a) 
-	copy(tmp2, b) 
-	open()
-		to(tmp1)
-		inc()
-		to(tmp2)
-		dec()
-	close()	
+	aget(i, code, ip)
+	printCell(i)
 
-	copy(n, tmp1) 
-	printCell(n)
-
-	move(a, b) 
-	move(b, tmp1) 
-	
-	to(i)
-	dec()
+	to(r)
 close()
-]]
