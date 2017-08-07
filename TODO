@@ -1,5 +1,3 @@
- - alloc returns { type = "cell", address = <>, size = 1 }
- - allocBlock returns { type = "block", address = <>, size = <> }
  - macros use address and size; copy/move/swap (etc) values of arbitrary size
  - aon(a, i, c); ececute c with dp on i in a
  - statistics about how many instructions each function generates
