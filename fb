@@ -165,7 +165,7 @@ local fenv = {
 		if not allowUnbalanced then
 			if loop.left ~= loop.right then
 				local info = getCallerInfo()
-				error("unbalanced loop: " .. loop.start .. " to " .. info.short_src .. ":" .. info.currentline)
+				error("unbalanced loop: " .. loop.address .. " to " .. info.short_src .. ":" .. info.currentline)
 			end
 		else
 			if loop.left ~= loop.right then
@@ -184,14 +184,21 @@ local fenv = {
 		return pointer
 	end,
 	to = function(n)
-		goto(n)
+		goto(n.address)
 	end,
 	at = function(n)
-		pointer = n
+		pointer = n.address
 		pointerValid = true
 	end,
 	maxCells = function(n)
 		maxCells = n
+	end,
+	cell = function(addr)
+		return { 
+			type = "cell",
+			address = addr,
+			size = 1
+		}
 	end,
 	alloc = function(n)
 		if not n then
@@ -208,7 +215,7 @@ local fenv = {
 			cellsInUse = cellsInUse + n
 
 			if cellsInUse > maxCellsInUse then
-				maxCellsInUse = cellsInUse
+					maxCellsInUse = cellsInUse
 			end
 		end
 
@@ -218,7 +225,11 @@ local fenv = {
 		while #result < n do
 			if not cells[i] then
 				cells[i] = true
-				table.insert(result, i - 1)
+				table.insert(result, {
+					type = "cell",
+					address = i - 1,
+					size = 1
+				})
 
 				local rt = pointer
 				goto(i - 1)
@@ -235,8 +246,10 @@ local fenv = {
 	free = function(...)
 		local addrs = { ... }
 		for i = 1, #addrs do
-			local addr = addrs[i]
-			
+			local a = addrs[i]
+			assert(a.type == "cell")
+			local addr = a.address
+
 			if type(addr) ~= "number" or addr ~= math.floor(addr) then
 				error("invalid address " .. tostring(addr))
 			end
@@ -252,10 +265,14 @@ local fenv = {
 		cellsInUse = cellsInUse - #addrs
 	end,
 	allocated = function(addr)
-		return cells[addr + 1]
+		assert(addr.type == "cell")
+		return cells[addr.address + 1]
 	end,
 	allocBlock = function(size)
-		local block = {}
+		local block = {
+			type = "block",
+			size = size
+		}
 
 		for i = 1, maxCells do
 			local good = true
@@ -270,8 +287,7 @@ local fenv = {
 			end
 
 			if good then
-				block.start = i - 1
-				block.length = size
+				block.address = i - 1
 
 				local rt = pointer
 				for j = i, i + size - 1 do
@@ -292,9 +308,9 @@ local fenv = {
 		end
 	end,
 	freeBlock = function(blk)
-		assert(blk)
+		assert(blk.type == "block")
 
-		for i = blk.start, blk.start + blk.length - 1 do
+		for i = blk.address, blk.address + blk.size - 1 do
 			if cells[i] then
 				error("block corrupted")
 			end
@@ -302,12 +318,12 @@ local fenv = {
 			cells[i] = false
 		end
 
-		cellsInUse = cellsInUse - blk.length
+		cellsInUse = cellsInUse - blk.size
 	end,
 	blockAllocated = function(blk)
-		assert(blk)
+		assert(blk.type == "block")
 
-		for i = blk.start, blk.start + blk.length - 1 do
+		for i = blk.address, blk.address + blk.size - 1 do
 			if not cells[i] then
 				return false
 			end
@@ -360,7 +376,7 @@ setfenv(func, fenv)
 local status, ret, err = xpcall(func, debug.traceback)
 if status and not err then
 	if loop then
-		print("Loop has no end: " .. loop.start)
+		print("Loop has no end: " .. loop.address)
 		return
 	end
 

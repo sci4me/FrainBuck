@@ -1,22 +1,22 @@
 local function arrayAllocated(a)
-	return blockAllocated(a) and a.length >= 5
+	return blockAllocated(a) and a.size >= 5
 end
 
 function ainit(a)
 	assert(arrayAllocated(a))
 
-	local s = a.start
-	local e = a.start + a.length - 1
+	local s = a.address
+	local e = a.address + a.size - 1
 	local tmp = e - 1
 
 	for i = 1, tmp - 2 do
 		if i % 2 == 0 then
-			to(a.start + i)
+			to(cell(a.address + i))
 			inc()
 		end
 	end
 
-	to(a.start)
+	to(a)
 end
 
 function aset(a, i, v)
@@ -24,13 +24,14 @@ function aset(a, i, v)
 	assert(allocated(i))
 	assert(allocated(v))
 
-	local s = a.start
-	local e = a.start + a.length - 1
-	local tmp = e - 1
+	local s = cell(a.address)
+	local e = cell(a.address + a.size - 1)
+	local tmp = cell(e.address - 1)
 
 	copy(tmp, i)
 
-	to(s + 2)
+	to(s)
+	right(2)
 	open()
 		dec()
 		emit(">>")
@@ -98,9 +99,9 @@ function aget(r, a, i)
 	assert(arrayAllocated(a))
 	assert(allocated(i))
 
-	local s = a.start
-	local e = a.start + a.length - 1
-	local tmp = e - 1
+	local s = a
+	local e = cell(a.address + a.size - 1)
+	local tmp = cell(e.address - 1)
 
 	local tmp2 = alloc()
 
@@ -109,7 +110,8 @@ function aget(r, a, i)
 
 	copy(tmp, i)
 
-	to(s + 2)
+	to(s)
+	right(2)
 	open()
 		dec()
 		emit(">>")
@@ -194,8 +196,8 @@ function alen(r, a)
 	assert(allocated(r))
 	assert(arrayAllocated(a))
 
-	local s = a.start
-	local e = a.start + a.length - 1
+	local s = a.address
+	local e = a.address + a.size - 1
 	local tmp = e - 1
 
 	set(tmp, 0)
