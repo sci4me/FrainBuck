@@ -1,3 +1,5 @@
+ - refactor fb into source files
+ - alloc/free, allocBlock/freeBlock in an Allocator in the Context
  - macros use address and size; copy/move/swap (etc) values of arbitrary size
  - aon(a, i, c); ececute c with dp on i in a
  - statistics about how many instructions each function generates

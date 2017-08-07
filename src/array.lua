@@ -2,6 +2,16 @@ local function arrayAllocated(a)
 	return blockAllocated(a) and a.size >= 5
 end
 
+function Array(elements, elementSize)
+	local self = {
+		
+	}
+
+
+
+	return self
+end
+
 function ainit(a)
 	assert(arrayAllocated(a))
 

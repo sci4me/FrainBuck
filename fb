@@ -28,6 +28,31 @@ local cellsInUse = 0
 local maxCellsInUse = 0
 local maxCells = 30000
 
+local context = {}
+local contexts = {}
+
+local function copy(t, seen)
+	if type(t) ~= "table" then return t end
+	if seen and seen[t] then return seen[t] end
+	local s = seen or {}
+	local res = setmetatable({}, getmetatable(t))
+	s[t] = res
+	for k, v in pairs(t) do res[copy(k, s)] = copy(v, s) end
+	return res
+end
+
+local function push_context(ctx)
+	table.insert(contexts, context)
+	context = ctx
+end
+
+local function pop_context()
+	local index = #contexts
+	local ctx = contexts[index]
+	table.remove(contexts, index)
+	context = ctx
+end
+
 local function emit(s)
 	if s then
 		table.insert(buffer, tostring(s))
@@ -124,6 +149,11 @@ local function goto(n)
 end
 
 local fenv = {
+	context = function()
+		return copy(context)
+	end,
+	push_context = push_context,
+	pop_context = pop_context,
 	emit = emit,
 	emitln = function(s)
 		emit(s)
