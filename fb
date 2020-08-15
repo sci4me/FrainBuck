@@ -68,7 +68,7 @@ local function emitn(s, n)
 		end 
 
 		if n < 0 then
-			error("n must be > 0")
+			error("n must be >= 0")
 		end
 
 		s = tostring(s)
