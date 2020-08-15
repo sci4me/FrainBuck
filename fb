@@ -149,7 +149,7 @@ local function goto(n)
 end
 
 local fenv = {
-	context = function()
+	context = function()-
 		return copy(context)
 	end,
 	push_context = push_context,
@@ -192,14 +192,12 @@ local fenv = {
 		emit("[")
 	end,
 	close = function(allowUnbalanced)
-		if not allowUnbalanced then
-			if loop.left ~= loop.right then
+		if loop.left ~= loop.right then
+			if allowUnbalanced then
+				pointerValid = false
+			else
 				local info = getCallerInfo()
 				error("unbalanced loop: " .. loop.address .. " to " .. info.short_src .. ":" .. info.currentline)
-			end
-		else
-			if loop.left ~= loop.right then
-				pointerValid = false
 			end
 		end
 		loop = loopStack[#loopStack]
